@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
       await logoutUser(); // backend cookies clear karega
     } finally {
       localStorage.removeItem("token");
-      setUser(null);
+      setUser(null);     // isse upar wale effect ka cleanup chalega, socket disconnect hoga
     }
   };
 

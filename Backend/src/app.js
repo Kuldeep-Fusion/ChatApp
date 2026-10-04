@@ -19,6 +19,7 @@ app.use(cors({
     origin: config.CLIENT_URL,   
     credentials: true,
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize()); 
@@ -30,7 +31,8 @@ app.use('/api/users', UserRouter);
 app.use('/api/message/', MessageRoute);
 app.use('/api/chats', ConversationRouter);
 app.use('/api/user/manage', ManageRoute);
-app.use('/api/relationship', RelationshipRoute)
+app.use('/api/relationship', RelationshipRoute);
+
 app.get('/', (req, res) => {
     return res.json({ message: 'server is running' });
 });

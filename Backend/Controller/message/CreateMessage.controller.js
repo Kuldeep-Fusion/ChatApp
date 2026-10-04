@@ -5,10 +5,10 @@ import Conversation from "../../models/Conversation.Model.js";
 
 export async function CreateMessage(req, res) {
   try {
-    console.log(req.user);
     const senderId = req.user.userId;
     const { receiverId } = req.params;
     const { type, content } = req.body;
+    console.log(req.body);
 
     // 1. Receiver check
     const receiver = await User.findById(receiverId);
@@ -29,7 +29,7 @@ export async function CreateMessage(req, res) {
 
     // 3. Conversation: find or create
     let conversation = await Conversation.findOne({
-      participants: { $all: [senderId, receiverId] },
+       participants: { $all: [senderId, receiverId], $size: 2 },
     });
     if (!conversation) {
       conversation = await Conversation.create({
@@ -59,12 +59,21 @@ export async function CreateMessage(req, res) {
       type,
       content: content?.trim() || "",
       media,
+      status: "sent",
     });
 
     // 6. Conversation update
     conversation.lastMessage = message._id;
     conversation.lastMessageAt = message.createdAt;
     await conversation.save();
+
+
+const io = req.app.get("io");
+conversation.participants.forEach((userId) => {
+  if (userId.toString() !== senderId.toString()) {
+    io.to(userId.toString()).emit("new-message", message);
+  }
+});
 
     return res.status(201).json({ success: true, data: message });
   } catch (error) {

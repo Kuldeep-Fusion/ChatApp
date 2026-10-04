@@ -10,9 +10,13 @@ import { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { SendMessage } from "../../services/message.api";
+import { useSocket } from "../../context/SocketProvider";
 
 const MessageInput = ({ onSent }) => {
   const { id } = useParams();
+
+  // SocketProvider se direct socket
+  const socket = useSocket();
 
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
@@ -21,30 +25,23 @@ const MessageInput = ({ onSent }) => {
 
   const fileInputRef = useRef(null);
 
-  // =========================
-  // CAN SEND
-  // =========================
-
   const canSend =
     (message.trim() || file) && !sending;
 
-  // =========================
-  // FILE CHANGE
-  // =========================
-
+  // --------------------------------
+  // File Select
+  // --------------------------------
   const handleChange = (e) => {
     const selected = e.target.files?.[0];
 
     if (!selected) return;
 
-    // Previous preview cleanup
     if (preview) {
       URL.revokeObjectURL(preview);
     }
 
     setFile(selected);
 
-    // Image preview
     if (selected.type.startsWith("image/")) {
       const objectUrl = URL.createObjectURL(selected);
       setPreview(objectUrl);
@@ -53,10 +50,9 @@ const MessageInput = ({ onSent }) => {
     }
   };
 
-  // =========================
-  // CANCEL FILE
-  // =========================
-
+  // --------------------------------
+  // Remove File
+  // --------------------------------
   const cancelSelection = () => {
     if (preview) {
       URL.revokeObjectURL(preview);
@@ -70,10 +66,9 @@ const MessageInput = ({ onSent }) => {
     }
   };
 
-  // =========================
-  // MESSAGE TYPE
-  // =========================
-
+  // --------------------------------
+  // Message Type
+  // --------------------------------
   const getType = () => {
     if (!file) {
       return "text";
@@ -90,9 +85,6 @@ const MessageInput = ({ onSent }) => {
     return "file";
   };
 
-  // =========================
-  // SUBMIT
-  // =========================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,14 +96,13 @@ const MessageInput = ({ onSent }) => {
       return;
     }
 
+    const content = message.trim();
+    const type = getType();
+
     const formData = new FormData();
 
-    formData.append("type", getType());
-
-    formData.append(
-      "content",
-      message.trim()
-    );
+    formData.append("type", type);
+    formData.append("content", content);
 
     if (file) {
       formData.append("media", file);
@@ -120,31 +111,37 @@ const MessageInput = ({ onSent }) => {
     try {
       setSending(true);
 
-      const res = await SendMessage(
-        id,
-        formData
-      );
+      const res = await SendMessage(id, formData);
 
-      console.log(
-        "Message sent:",
-        res?.data
-      );
+      console.log("Message saved:", res?.data);
 
-      // Add message to chat
-      onSent?.(
-        res?.data?.data
-      );
+      const newMessage = res?.data?.data;
 
-      // Clear message
+      if (!newMessage) {
+        console.error("Message response is missing");
+        return;
+      }
+
+      onSent?.(newMessage);
+
+      if (socket?.connected) {
+        socket.emit("send_message", {
+          receiverId: id,
+          message: newMessage,
+        });
+
+        console.log("📤 Message sent through socket");
+      } else {
+        console.warn("Socket is not connected");
+      }
       setMessage("");
 
-      // Clear file
       cancelSelection();
+
     } catch (error) {
       console.error(
         "Failed to send message:",
-        error?.response?.data ||
-          error
+        error?.response?.data || error
       );
     } finally {
       setSending(false);
@@ -154,10 +151,7 @@ const MessageInput = ({ onSent }) => {
   return (
     <div className="px-4 pb-5 pt-2 sm:px-5 sm:pb-6">
 
-      {/* =========================
-          FILE PREVIEW
-      ========================= */}
-
+      {/* File Preview */}
       {file && (
         <div className="relative mb-2 inline-block">
 
@@ -172,8 +166,6 @@ const MessageInput = ({ onSent }) => {
               {file.name}
             </div>
           )}
-
-          {/* Remove file */}
 
           <button
             type="button"
@@ -201,19 +193,13 @@ const MessageInput = ({ onSent }) => {
         </div>
       )}
 
-      {/* =========================
-          FORM
-      ========================= */}
-
+      {/* Form */}
       <form
         onSubmit={handleSubmit}
         className="flex items-center gap-2"
       >
 
-        {/* =========================
-            INPUT CONTAINER
-        ========================= */}
-
+        {/* Input Container */}
         <div
           className="
             flex
@@ -227,10 +213,7 @@ const MessageInput = ({ onSent }) => {
           "
         >
 
-          {/* =========================
-              EMOJI
-          ========================= */}
-
+          {/* Emoji */}
           <button
             type="button"
             className="
@@ -251,16 +234,11 @@ const MessageInput = ({ onSent }) => {
             />
           </button>
 
-          {/* =========================
-              MESSAGE INPUT
-          ========================= */}
-
+          {/* Message */}
           <input
             type="text"
             value={message}
-            onChange={(e) =>
-              setMessage(e.target.value)
-            }
+            onChange={(e) => setMessage(e.target.value)}
             placeholder="Enter your message"
             className="
               min-w-0
@@ -274,10 +252,7 @@ const MessageInput = ({ onSent }) => {
             "
           />
 
-          {/* =========================
-              ATTACHMENT
-          ========================= */}
-
+          {/* Attachment */}
           <div>
             <label
               htmlFor="file"
@@ -307,21 +282,11 @@ const MessageInput = ({ onSent }) => {
               name="file"
               className="hidden"
               onChange={handleChange}
-              accept="
-                image/*
-                ,video/*
-                ,.pdf
-                ,.doc
-                ,.docx
-                ,.txt
-              "
+              accept="image/*,video/*,.pdf,.doc,.docx,.txt"
             />
           </div>
 
-          {/* =========================
-              MIC
-          ========================= */}
-
+          {/* Mic */}
           <button
             type="button"
             className="
@@ -345,10 +310,7 @@ const MessageInput = ({ onSent }) => {
 
         </div>
 
-        {/* =========================
-            SEND
-        ========================= */}
-
+        {/* Send */}
         <button
           type="submit"
           disabled={!canSend}

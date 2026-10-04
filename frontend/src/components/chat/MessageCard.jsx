@@ -6,8 +6,8 @@ const MessageCard = ({ message, friendId }) => {
   return (
     <MessageBubble
       content={message.content}
-      type={message.type}                       // 👈 add
-      media={message.media}                     // 👈 add
+      type={message.type}                       
+      media={message.media}                    
       time={message.createdAt}
       isMine={isMine}
       isEdited={message.isEdited}
