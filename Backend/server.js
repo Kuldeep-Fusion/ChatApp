@@ -7,7 +7,7 @@ const server = http.createServer(app);       // pehle http server banao
 console.log(server.constructor.name);        // "Server" print hona chahiye
 const io = initSocket(server);               // app nahi, server pass karo
 
-ConnectDB();
+await ConnectDB();
 app.set("io", io);
 const PORT = 3000 
 server.listen(PORT, () => {
