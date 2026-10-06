@@ -1,13 +1,13 @@
 
 
 import Router from 'express'
-import { CreateMessage } from '../Controller/message/CreateMessage.controller.js';
-import { GetSingleMessage } from '../Controller/message/GetSingleMessage.controller.js';
-import { DeleteSingleMessage } from '../Controller/message/DeleteSingleMessage.controller.js';
-import { UpdateMessage } from '../Controller/message/UpdateMessage.controller.js';
+import { CreateMessage } from '../Controllers/message/CreateMessage.controller.js';
+import { GetSingleMessage } from '../Controllers/message/GetSingleMessage.controller.js';
+import { DeleteSingleMessage } from '../Controllers/message/DeleteSingleMessage.controller.js';
+import { UpdateMessage } from '../Controllers/message/UpdateMessage.controller.js';
 import upload from '../middleware/upload.js';
 import { AuthMiddleware } from '../middleware/auth.middleware.js';
-import { DeleteMessageMedia } from '../Controller/message/DeleteMessageMedia.controller.js';
+import { DeleteMessageMedia } from '../Controllers/message/DeleteMessageMedia.controller.js';
 
 const router = Router();
 

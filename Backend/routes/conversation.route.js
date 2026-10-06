@@ -1,9 +1,9 @@
 import Router from 'express'
-import { Create } from '../Controller/conversation/Create.controller.js';
+import { Create } from '../Controllers/conversation/Create.controller.js';
 import { AuthMiddleware } from '../middleware/auth.middleware.js';
-import { GetAll } from '../Controller/conversation/GetAll.controller.js';
-import { GetSingle } from '../Controller/conversation/GetSingle.controller.js';
-import { Delete } from '../Controller/conversation/Delete.controller.js';
+import { GetAll } from '../Controllers/conversation/GetAll.controller.js';
+import { GetSingle } from '../Controllers/conversation/GetSingle.controller.js';
+import { Delete } from '../Controllers/conversation/Delete.controller.js';
 
 const router = Router();
 

@@ -1,8 +1,8 @@
 import express from 'express'
-import { askAI } from '../Controller/gemini/Genrate.Controller.js';
+import { askAI } from '../Controllers/gemini/Genrate.Controller.js';
 import { AuthMiddleware } from '../middleware/auth.middleware.js';
-import { getAIHistory } from '../Controller/gemini/History.Controller.js';
-import { deleteAIHistory } from '../Controller/gemini/Delete.Controller.js';
+import { getAIHistory } from '../Controllers/gemini/History.Controller.js';
+import { deleteAIHistory } from '../Controllers/gemini/Delete.Controller.js';
 
 
 const router = express.Router();

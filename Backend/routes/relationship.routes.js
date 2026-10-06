@@ -10,10 +10,10 @@ import {
   getRejected,
   getPending,
   cancelFriendRequest,
-} from "../Controller/relationship/relationship.controller.js";
+} from "../Controllers/relationship/relationship.controller.js";
 
 import {AuthMiddleware} from "../middleware/auth.middleware.js";
-import { getFriendById } from "../Controller/relationship/getFriendById.controller.js";
+import { getFriendById } from "../Controllers/relationship/getFriendById.controller.js";
 
 const router = express.Router();
 
