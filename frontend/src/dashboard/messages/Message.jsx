@@ -63,15 +63,7 @@ const Message = () => {
           active:scale-95
         "
       >
-        <Bot
-          size={24}
-          strokeWidth={1.8}
-          className="
-            transition-transform
-            duration-300
-            group-hover:rotate-6
-          "
-        />
+        <img src="/favicon.png" alt="Milan Chat" className="rounded-sm w-full" />
 
         {/* Online indicator */}
         <span

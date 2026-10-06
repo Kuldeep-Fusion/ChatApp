@@ -12,6 +12,7 @@ const Explore = () => {
       className="
         mx-auto
         flex
+        h-[90vh]
         w-full
         flex-col
         overflow-scroll

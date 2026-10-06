@@ -38,7 +38,7 @@ const AIChatHeader = ({ onDeleteSuccess }) => {
       {/* Left */}
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-full bg-green-100">
-          <Sparkles className="h-5 w-5 text-green-600" />
+          <img src="/logo.png" alt="Milan Chat" className="rounded-sm h-10 w-full" />
         </div>
 
         <div>

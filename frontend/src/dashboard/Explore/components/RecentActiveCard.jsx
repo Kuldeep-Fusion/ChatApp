@@ -21,7 +21,7 @@ const RecentActiveCard = ({ user }) => {
           "
         >
           <img
-            src={user.avatar || "https://i.pravatar.cc/150?img=12"}
+            src={user.avatar || "/logo.png"}
             alt={user?.name || "User"}
             className="h-full w-full object-cover"
           />

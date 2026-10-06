@@ -7,7 +7,7 @@ const MessageChatAI = ({ message }) => {
     return (
       <div className="flex items-end gap-2">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-100">
-          <Sparkles className="h-4 w-4 text-green-600" />
+          <img src="/logo.png" alt="Milan Chat" className="rounded-sm w-full" />
         </div>
 
         <div className="rounded-2xl rounded-bl-md bg-white px-4 py-3 shadow-sm">
@@ -30,7 +30,7 @@ const MessageChatAI = ({ message }) => {
       {/* AI Avatar */}
       {!isUser && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-100">
-          <Sparkles className="h-4 w-4 text-green-600" />
+           <img src="/logo.png" alt="Milan Chat" className="rounded-sm w-full" />
         </div>
       )}
 
