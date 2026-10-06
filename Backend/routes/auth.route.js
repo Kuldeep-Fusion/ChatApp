@@ -6,9 +6,10 @@ import { getMe } from '../Controllers/auth/GetMe.controller.js';
 import { AuthMiddleware } from '../middleware/auth.middleware.js';
 import { RefreshToken } from '../Controllers/auth/RefreshToken.controller.js';
 import { DeleteUser } from '../Controllers/auth/DeleteSingle.controller.js';
+import ConnectDB from '../config/MongoDb.js';
 
 const router = Router();
-
+await ConnectDB();
 router.post('/register', RegisterUser);
 router.post('/Login', LoginUser);
 router.post('/Logout', LogoutUser);
