@@ -1,6 +1,6 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import DashBoard from "./dashboard/DashBoard";
-import Login from "./auth/login";
+import Login from "./auth/Login";
 import Register from "./auth/Register";
 import Message from "./dashboard/messages/Message";
 import SingleChat from "./dashboard/chat/SingleChat";
