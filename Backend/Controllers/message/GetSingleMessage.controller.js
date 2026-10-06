@@ -1,5 +1,5 @@
-import Conversation from "../../models/Conversation.Model.js";
-import Message from "../../models/Message.Model.js";
+import Conversation from "../../models/Conversation.model.js";
+import Message from "../../models/Message.model.js";
 
 
 

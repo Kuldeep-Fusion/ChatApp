@@ -1,5 +1,5 @@
 import User from "../../models/user.model.js";
-import Relationship from "../../models/relationship.mode.js";
+import Relationship from "../../models/relationship.model.js";
 
 export async function SearchUsers(req, res) {
     try {

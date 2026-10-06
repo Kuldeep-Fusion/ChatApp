@@ -1,4 +1,4 @@
-import Blocked from "../../models/Blocked.Model.js";
+import Blocked from "../../models/Blocked.model.js";
 
 export async function UnblockUser(req, res) {
     try {

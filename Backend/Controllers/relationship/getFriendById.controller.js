@@ -1,4 +1,4 @@
-import Relationship from '../../models/relationship.mode.js'
+import Relationship from '../../models/relationship.model.js'
 import User from "../../models/user.model.js";
 
 export const getFriendById = async (req, res) => {

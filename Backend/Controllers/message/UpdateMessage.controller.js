@@ -1,5 +1,5 @@
 import cloudinary from "../../config/cloudinary.js";
-import Message from "../../models/Message.Model.js";
+import Message from "../../models/Message.model.js";
 
 export async function UpdateMessage(req, res) {
    try {

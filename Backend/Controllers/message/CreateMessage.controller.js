@@ -1,6 +1,6 @@
 import cloudinary from "../../config/cloudinary.js";
 import User from "../../models/user.model.js";
-import Message from "../../models/Message.Model.js";
+import Message from "../../models/Message.model.js";
 import Conversation from "../../models/Conversation.model.js";
 
 export async function CreateMessage(req, res) {
