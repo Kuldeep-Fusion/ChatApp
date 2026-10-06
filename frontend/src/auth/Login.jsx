@@ -8,7 +8,7 @@ import {
   EyeIcon,
   EyeOffIcon,
   ArrowRightIcon,
-  MessageCircleIcon,
+
   CheckIcon,
 } from "@animateicons/react/lucide";
 
@@ -150,23 +150,14 @@ const handleSubmit = async (e) => {
 
                 <div className="flex items-center gap-3">
 
-                  <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-[#d9f99d] text-[#10251c]">
-
-                    <MessageCircleIcon
-                      size={21}
-                      duration={0.8}
-                    />
-
-                  </div>
-
-                  <span className="text-[17px] font-semibold tracking-tight text-white">
-                    Chatter
-                  </span>
+                  <img src="/logo4.png" alt="Milan ChatApp" className="-ml-6 h-20" />
 
                 </div>
 
+                 
+
                 {/* Hero */}
-                <div className="mt-20 max-w-md">
+                <div className="mt-5 max-w-md">
 
                   <p className="mb-4 text-xs font-medium uppercase tracking-[0.18em] text-[#86efac]/60">
                     Your conversations
@@ -274,20 +265,9 @@ const handleSubmit = async (e) => {
             <div className="w-full max-w-[390px]">
 
               {/* Mobile Logo */}
-              <div className="mb-10 flex items-center gap-3 lg:hidden">
+              <div className="mb-1 flex items-center gap-3 lg:hidden p-5 ">
 
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#10251c] text-[#d9f99d]">
-
-                  <MessageCircleIcon
-                    size={19}
-                    duration={0.8}
-                  />
-
-                </div>
-
-                <span className="text-[17px] font-semibold tracking-tight">
-                  Chatter
-                </span>
+                 <img src="/logo4.png" alt="Milan ChatApp" className="-ml-6 h-20 bg-green-950 p-2 rounded-sm" />
 
               </div>
 
