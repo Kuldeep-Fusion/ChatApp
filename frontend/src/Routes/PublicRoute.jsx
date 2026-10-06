@@ -6,5 +6,5 @@ export default function PublicRoute() {
 
   if (loading) return <div>Loading...</div>;
 
-  return user ? <Navigate to="/welcome" replace /> : <Outlet />;
+  return user ? <Navigate to="/explore" replace /> : <Outlet />;
 }

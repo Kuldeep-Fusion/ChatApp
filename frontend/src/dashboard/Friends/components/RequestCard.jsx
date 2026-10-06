@@ -1,37 +1,18 @@
 
 import { motion } from "framer-motion";
+import { GooeyToaster, gooeyToast } from 'goey-toast'
 
 import {
   Check,
   X,
 } from "@animateicons/react/lucide";
-import { AcceptRequest, RejectRequest } from "../../../services/friend.api";
 
-const RequestCard = ({ request }) => {
+
+const RequestCard = ({ request , handleAccept ,  handleReject }) => {
   const sender = request?.sender;
 
   if (!sender) return null;
 
-  const handleAccept = async () => {
-    try {
-      console.log("Accept request:", request._id);
-      const res = await AcceptRequest(request._id);
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-
-  };
-
-  const handleReject = async () => {
-    try {
-      console.log("Accept request:", request._id);
-      const res = await RejectRequest(request._id);
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <motion.article
@@ -39,8 +20,12 @@ const RequestCard = ({ request }) => {
       transition={{ duration: 0.2 }}
       className="rounded-[20px] border border-[#E7DFD2] bg-[#FFFDF8] p-3.5 shadow-[0_4px_20px_rgba(52,45,35,0.04)] sm:p-4"
     >
+     
       {/* User */}
       <div className="flex items-center gap-3">
+       <div>
+          <GooeyToaster position="top-center" description={false} />
+       </div>
 
         {/* Avatar */}
         <div className="relative shrink-0">
@@ -76,7 +61,7 @@ const RequestCard = ({ request }) => {
 
         <button
           type="button"
-          onClick={handleAccept}
+          onClick={ () => {handleAccept}}
           className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#163B2A] text-[11px] font-semibold text-white transition hover:bg-[#1D4A35] active:scale-[0.98] sm:h-11 sm:text-xs"
         >
           <Check size={14} />
@@ -85,7 +70,7 @@ const RequestCard = ({ request }) => {
 
         <button
           type="button"
-          onClick={handleReject}
+          onClick={ () => {handleReject}}
           className="flex h-10 items-center justify-center gap-1.5 rounded-xl border border-[#DED5C7] bg-[#F8F3EA] text-[11px] font-semibold text-[#665F54] transition hover:bg-[#F0E9DE] active:scale-[0.98] sm:h-11 sm:text-xs"
         >
           <X size={14} />

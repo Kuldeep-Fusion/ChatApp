@@ -1,7 +1,6 @@
 import {
   ArrowLeft,
-  MoreVertical,
-  Search,
+
 } from "lucide-react";
 
 const ChatHeader = ({ user, isActive, lastSeen }) => {
@@ -41,7 +40,7 @@ const ChatHeader = ({ user, isActive, lastSeen }) => {
             rounded-full
             text-[#171717]
             transition
-            hover:bg-black/5
+            hover:bg-black/5 
           "
         >
           <ArrowLeft
@@ -127,50 +126,7 @@ const ChatHeader = ({ user, isActive, lastSeen }) => {
         </div>
       </div>
 
-      {/* Right */}
-      <div className="flex shrink-0 items-center gap-1">
 
-        {/* Search */}
-        <button
-          className="
-            flex
-            h-11
-            w-11
-            items-center
-            justify-center
-            rounded-full
-            text-[#171717]
-            transition
-            hover:bg-black/5
-          "
-        >
-          <Search
-            size={28}
-            strokeWidth={2}
-          />
-        </button>
-
-        {/* More */}
-        <button
-          className="
-            flex
-            h-11
-            w-8
-            items-center
-            justify-center
-            rounded-full
-            text-[#171717]
-            transition
-            hover:bg-black/5
-          "
-        >
-          <MoreVertical
-            size={27}
-            strokeWidth={2}
-          />
-        </button>
-
-      </div>
 
     </header>
   );

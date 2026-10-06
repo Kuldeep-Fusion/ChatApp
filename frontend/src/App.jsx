@@ -10,15 +10,21 @@ import PublicRoute from "./Routes/PublicRoute";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import NotFound from "./NotFound";
 import Developer from "./dashboard/pages/Developer";
-import Welcome from "./dashboard/pages/Welcome";
-import WelcomeGate from "./Routes/WelcomeGate";
 import Friends from "./dashboard/friends/Friends";
+import ChatWithAI from "./dashboard/AIChat/ChatWithAI";
+import SearchPage from "./dashboard/search/SearchPage";
+import ProfilePopup from "./dashboard/Profile/SingleProfile/SingleProfile";
+import PrivacyPolicy from "./dashboard/pages/PrivacyPolicy";
+
+
 
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
+      <Routes>  
+
+
         
         <Route element={<PublicRoute />}>
           <Route path="/auth/login" element={<Login />} />
@@ -27,24 +33,23 @@ function App() {
 
        
         <Route element={<ProtectedRoute />}>
-          <Route path="/welcome" element={<Welcome />} />
-
-           <Route element={<WelcomeGate />}>
             <Route path="/" element={<DashBoard />}>
             <Route path="messages" element={<Message />} />
             <Route path="chats" element={<SingleChat />} />
-
              <Route path="chat/:id" element={<SingleChat />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="explore" element={<Explore />} />
             <Route path="developer" element={<Developer/>}/>
             <Route path="friends" element={<Friends/>}/>
-          </Route>
+            <Route path="chatwithai" element={<ChatWithAI/>}/>
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/profile/:id" element={<ProfilePopup />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy/>}/>
           </Route>
         </Route>
 
         <Route path="*" element={<NotFound/>}/>
-
+        
       </Routes>
     </BrowserRouter>
   );

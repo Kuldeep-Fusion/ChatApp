@@ -12,6 +12,7 @@ import MessageRoute from '../routes/messages.route.js';
 import ConversationRouter from '../routes/conversation.route.js';
 import ManageRoute from '../routes/blocked.route.js';
 import RelationshipRoute from '../routes/relationship.routes.js'
+import GeminiRouter from '../routes/gemini.route.js'
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/message/', MessageRoute);
 app.use('/api/chats', ConversationRouter);
 app.use('/api/user/manage', ManageRoute);
 app.use('/api/relationship', RelationshipRoute);
+app.use('/api/ai', GeminiRouter);
 
 app.get('/', (req, res) => {
     return res.json({ message: 'server is running' });

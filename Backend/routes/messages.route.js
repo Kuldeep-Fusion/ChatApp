@@ -16,7 +16,7 @@ router.post('/create/:receiverId', AuthMiddleware, upload.single("media"), Creat
 router.get('/get/:receiverId', AuthMiddleware, GetSingleMessage); // get all message in chat box
 router.delete('/delete/:messageId/',AuthMiddleware , DeleteSingleMessage); //delete last message send through id
 router.put('/update/:messageId', AuthMiddleware, UpdateMessage); //update single user
-router.delete("/:messageId/media", AuthMiddleware, DeleteMessageMedia);// delete only sfile
+router.delete("/:messageId/media", AuthMiddleware, DeleteMessageMedia);// delete only file
 
 
 export default router;

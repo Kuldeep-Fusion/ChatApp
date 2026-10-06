@@ -2,36 +2,43 @@
 import { Link, useLocation } from "react-router-dom";
 
 import {
-  MessageCircleIcon,
+  SendIcon,
   SettingsIcon,
-  BellPlus,
-  Globe,
+  UsersIcon,
+  HeartIcon,
+  BotIcon,
 } from "@animateicons/react/lucide";
 
 const Footer = () => {
   const location = useLocation();
 
   const navItems = [
+        {
+      label: "Explore",
+      path: "/explore",
+      icon: HeartIcon,
+    },
     {
       label: "Messages",
       path: "/messages",
-      icon: MessageCircleIcon,
+      icon: SendIcon,
     },
     {
-      label: "Notification",
+      label: "Chat Ai",
+      path: "/chatwithai",
+      icon: BotIcon,
+    },
+    {
+      label: "Friends",
       path: "/friends",
-      icon: BellPlus,
-    },
-    {
-      label: "Explore",
-      path: "/explore",
-      icon: Globe,
+      icon: UsersIcon,
     },
     {
       label: "Profile",
       path: "/profile",
       icon: SettingsIcon,
-    },
+    }
+     
   ];
 
   return (

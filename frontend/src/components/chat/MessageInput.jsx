@@ -1,21 +1,26 @@
 import {
-  Smile,
   Paperclip,
   Mic,
   Send,
   X,
+  Pencil,
 } from "lucide-react";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { SendMessage } from "../../services/message.api";
 import { useSocket } from "../../context/SocketProvider";
 
-const MessageInput = ({ onSent }) => {
+const MessageInput = ({
+  onSent,
+  editingMessage = null,
+  onCancelEdit,
+  onEditSubmit,
+}) => {
   const { id } = useParams();
+  
 
-  // SocketProvider se direct socket
   const socket = useSocket();
 
   const [message, setMessage] = useState("");
@@ -25,8 +30,30 @@ const MessageInput = ({ onSent }) => {
 
   const fileInputRef = useRef(null);
 
+  const isEditing = Boolean(editingMessage);
+
+  // --------------------------------
+  // Load message into input when edit starts
+  // --------------------------------
+  useEffect(() => {
+    if (editingMessage) {
+      setMessage(editingMessage.content || "");
+
+      // Editing is only for text messages
+      setFile(null);
+      setPreview(null);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }, [editingMessage]);
+
+  // --------------------------------
+  // Can Send
+  // --------------------------------
   const canSend =
-    (message.trim() || file) && !sending;
+    message.trim() && !sending;
 
   // --------------------------------
   // File Select
@@ -85,12 +112,53 @@ const MessageInput = ({ onSent }) => {
     return "file";
   };
 
+  // --------------------------------
+  // Cancel Edit
+  // --------------------------------
+  const handleCancelEdit = () => {
+    setMessage("");
 
+    onCancelEdit?.();
+  };
+
+  // --------------------------------
+  // Submit
+  // --------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!canSend) return;
 
+    // ==================================
+    // EDIT MODE
+    // ==================================
+    if (isEditing) {
+      try {
+        setSending(true);
+
+        await onEditSubmit?.({
+          id: editingMessage.id,
+          content: message.trim(),
+        });
+
+        setMessage("");
+
+        onCancelEdit?.();
+      } catch (error) {
+        console.error(
+          "Failed to edit message:",
+          error?.response?.data || error
+        );
+      } finally {
+        setSending(false);
+      }
+
+      return;
+    }
+
+    // ==================================
+    // NORMAL SEND MODE
+    // ==================================
     if (!id) {
       console.error("Conversation ID is missing");
       return;
@@ -134,10 +202,10 @@ const MessageInput = ({ onSent }) => {
       } else {
         console.warn("Socket is not connected");
       }
+
       setMessage("");
 
       cancelSelection();
-
     } catch (error) {
       console.error(
         "Failed to send message:",
@@ -151,8 +219,66 @@ const MessageInput = ({ onSent }) => {
   return (
     <div className="px-4 pb-5 pt-2 sm:px-5 sm:pb-6">
 
-      {/* File Preview */}
-      {file && (
+      {/* ================================
+          EDIT MODE HEADER
+      ================================= */}
+      {isEditing && (
+        <div
+          className="
+            mb-2
+            flex
+            items-center
+            justify-between
+            rounded-xl
+            bg-white
+            px-4
+            py-2
+            shadow-[0_2px_10px_rgba(0,0,0,0.04)]
+          "
+        >
+          <div className="flex items-center gap-2">
+            <Pencil
+              size={16}
+              className="text-[#687d1c]"
+            />
+
+            <div className="flex flex-col">
+              <span className="text-xs font-semibold text-[#20251a]">
+                Editing message
+              </span>
+
+              <span className="max-w-[250px] truncate text-xs text-gray-500">
+                {editingMessage?.content}
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleCancelEdit}
+            className="
+              flex
+              h-7
+              w-7
+              items-center
+              justify-center
+              rounded-full
+              text-gray-500
+              transition
+              hover:bg-gray-100
+              hover:text-gray-800
+            "
+            aria-label="Cancel editing"
+          >
+            <X size={17} />
+          </button>
+        </div>
+      )}
+
+      {/* ================================
+          FILE PREVIEW
+      ================================= */}
+      {!isEditing && file && (
         <div className="relative mb-2 inline-block">
 
           {preview ? (
@@ -193,13 +319,15 @@ const MessageInput = ({ onSent }) => {
         </div>
       )}
 
-      {/* Form */}
+      {/* ================================
+          FORM
+      ================================= */}
       <form
         onSubmit={handleSubmit}
         className="flex items-center gap-2"
       >
 
-        {/* Input Container */}
+        {/* INPUT CONTAINER */}
         <div
           className="
             flex
@@ -213,33 +341,52 @@ const MessageInput = ({ onSent }) => {
           "
         >
 
-          {/* Emoji */}
-          <button
-            type="button"
-            className="
-              flex
-              h-10
-              w-10
-              shrink-0
-              items-center
-              justify-center
-              text-[#73746e]
-              transition
-              hover:text-[#222]
-            "
-          >
-            <Smile
-              size={28}
-              strokeWidth={1.8}
-            />
-          </button>
+          {/* Attachment */}
+          {!isEditing && (
+            <div>
+              <label
+                htmlFor="file"
+                className="
+                  flex
+                  h-10
+                  w-10
+                  shrink-0
+                  cursor-pointer
+                  items-center
+                  justify-center
+                  text-[#73746e]
+                  transition
+                  hover:text-[#222]
+                "
+              >
+                <Paperclip
+                  size={27}
+                  strokeWidth={1.8}
+                />
+              </label>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                id="file"
+                name="file"
+                className="hidden"
+                onChange={handleChange}
+                accept="image/*,video/*,.pdf,.doc,.docx,.txt"
+              />
+            </div>
+          )}
 
           {/* Message */}
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Enter your message"
+            placeholder={
+              isEditing
+                ? "Edit your message..."
+                : "Enter your message"
+            }
             className="
               min-w-0
               flex-1
@@ -252,65 +399,35 @@ const MessageInput = ({ onSent }) => {
             "
           />
 
-          {/* Attachment */}
-          <div>
-            <label
-              htmlFor="file"
+          {/* Mic */}
+          {!isEditing && (
+            <button
+              type="button"
               className="
-                flex
+                hidden
                 h-10
                 w-10
                 shrink-0
-                cursor-pointer
                 items-center
                 justify-center
                 text-[#73746e]
                 transition
                 hover:text-[#222]
+                xs:flex
               "
             >
-              <Paperclip
-                size={27}
+              <Mic
+                size={26}
                 strokeWidth={1.8}
               />
-            </label>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              id="file"
-              name="file"
-              className="hidden"
-              onChange={handleChange}
-              accept="image/*,video/*,.pdf,.doc,.docx,.txt"
-            />
-          </div>
-
-          {/* Mic */}
-          <button
-            type="button"
-            className="
-              hidden
-              h-10
-              w-10
-              shrink-0
-              items-center
-              justify-center
-              text-[#73746e]
-              transition
-              hover:text-[#222]
-              xs:flex
-            "
-          >
-            <Mic
-              size={26}
-              strokeWidth={1.8}
-            />
-          </button>
+            </button>
+          )}
 
         </div>
 
-        {/* Send */}
+        {/* ================================
+            SEND / UPDATE BUTTON
+        ================================= */}
         <button
           type="submit"
           disabled={!canSend}
@@ -333,12 +450,19 @@ const MessageInput = ({ onSent }) => {
             disabled:opacity-60
           "
         >
-          <Send
-            size={28}
-            fill="currentColor"
-            strokeWidth={1.5}
-            className="-rotate-[5deg]"
-          />
+          {isEditing ? (
+            <Pencil
+              size={25}
+              strokeWidth={2}
+            />
+          ) : (
+            <Send
+              size={28}
+              fill="currentColor"
+              strokeWidth={1.5}
+              className="-rotate-[5deg]"
+            />
+          )}
         </button>
 
       </form>

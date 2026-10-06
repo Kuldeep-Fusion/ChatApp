@@ -31,12 +31,6 @@ const FriendsTabs = ({
       icon: ClockIcon,
       count: counts.pending,
     },
-    {
-      id: "rejected",
-      label: "Rejected",
-      icon: UserRoundX,
-      count: counts.rejected,
-    },
   ];
 
   return (

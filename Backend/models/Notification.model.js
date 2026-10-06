@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema(
   {
+    // Jisko notification milega
     recipient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -9,6 +10,7 @@ const notificationSchema = new mongoose.Schema(
       index: true,
     },
 
+    // Notification kis user ki wajah se hai
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -19,17 +21,23 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       enum: [
         "message",
+        "friend_request",
+        "friend_accepted",
+        "friend_rejected",
+        "friend_removed",
         "system",
       ],
       required: true,
     },
 
+    // Message notification ke liye
     conversation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Conversation",
       default: null,
     },
 
+    // Notification text
     message: {
       type: String,
       default: "",
@@ -49,6 +57,12 @@ const notificationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Fast notification listing
+notificationSchema.index({
+  recipient: 1,
+  createdAt: -1,
+});
 
 const Notification = mongoose.model(
   "Notification",

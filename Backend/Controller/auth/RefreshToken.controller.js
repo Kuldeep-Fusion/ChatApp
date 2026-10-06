@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../../models/user.model.js";
 import { generateToken } from "../../utils/token.js";
 import { generateCookieToken } from "../../utils/cookie.js";
+import config from "../../config/config.js";
 
 
 export async function RefreshToken(req, res) {
@@ -11,7 +12,7 @@ export async function RefreshToken(req, res) {
       return res.status(401).json({ success: false, message: "No refresh token" });
     }
 
-    const decoded = jwt.verify(token, process.env.REFRESH_SECRET); // jo secret generateToken mein use hua
+    const decoded = jwt.verify(token, config.JWT_SECRET); // jo secret generateToken mein use hua
     const user = await User.findById(decoded.userId);
     if (!user) {
       return res.status(401).json({ success: false, message: "User not found" });
@@ -21,7 +22,12 @@ export async function RefreshToken(req, res) {
     generateCookieToken(res, refreshToken, accessToken);
 
     return res.status(200).json({ success: true, token: accessToken });
-  } catch {
-    return res.status(401).json({ success: false, message: "Invalid refresh token" });
-  }
+ } catch (err) {
+  console.log("REFRESH ERROR:", err.name, "-", err.message);
+
+  return res.status(401).json({
+    success: false,
+    message: "Invalid refresh token",
+  });
+}
 }

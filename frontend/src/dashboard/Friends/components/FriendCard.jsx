@@ -9,6 +9,23 @@ import {
 import {Link} from 'react-router-dom'
 
 const FriendCard = ({ friend  }) => {
+
+    const formatLastSeen = (date) => {
+    if (!date) {
+      return "offline";
+    }
+
+    const lastSeenDate = new Date(date);
+
+    return `last seen ${lastSeenDate.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })}`;
+  };
+
   return (
     <motion.article
       whileHover={{ y: -2 }}
@@ -41,7 +58,7 @@ const FriendCard = ({ friend  }) => {
           </p>
 
           <p className="mt-1 text-[10px] font-medium text-[#79A95A]">
-            {friend.lastSeen}
+            {formatLastSeen(friend.lastSeen)}
           </p>
         </div>
 

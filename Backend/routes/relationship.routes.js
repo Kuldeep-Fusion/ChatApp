@@ -84,7 +84,7 @@ router.delete(
 
 // Remove friend
 router.delete(
-  "/friend/:friendId",
+  "/friend/:friendId/delete",
   AuthMiddleware,
   removeFriend
 );

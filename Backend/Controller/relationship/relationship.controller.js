@@ -294,7 +294,8 @@ export const rejectFriendRequest = async (req, res) => {
 export const removeFriend = async (req, res) => {
   try {
     const userId =  req.user.userId;
-    const friendId = req.params.UserId;
+    const friendId = req.params.friendId;
+    console.log(friendId);
 
     const relationship = await Relationship.findOne({
       status: "accepted",

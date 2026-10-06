@@ -6,7 +6,7 @@ import {
   UserMinusIcon,
 } from "@animateicons/react/lucide";
 
-import { FriendList } from "../../services/friend.api";
+import { FriendList, RemoveFreind } from "../../services/friend.api";
 
 const FriendsModal = ({ onClose }) => {
   const [friends, setFriends] = useState([]);
@@ -43,7 +43,15 @@ const FriendsModal = ({ onClose }) => {
   });
 
   // Remove friend from UI
-  const handleRemoveFriend = (friendId) => {
+  const handleRemoveFriend = async (friendId) => {
+  try {
+    console.log(friendId);
+     const res = await RemoveFreind(friendId);
+     console.log(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+
     setFriends((prev) =>
       prev.filter((friend) => friend._id !== friendId)
     );

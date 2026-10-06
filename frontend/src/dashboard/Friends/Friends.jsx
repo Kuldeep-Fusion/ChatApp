@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { GooeyToaster, gooeyToast } from "goey-toast";
 
 import FriendsTabs from "./components/FriendsTabs";
 import RequestCard from "./components/RequestCard";
@@ -8,10 +9,12 @@ import FriendCard from "./components/FriendCard";
 import EmptyFriends from "./components/EmptyFriends";
 
 import {
+  AcceptRequest,
   FriendList,
   GetPendingList,
-  GetRejected,
   GetRequestList,
+  PendingRejectRequest,
+  RejectRequest,
 } from "../../services/friend.api";
 
 const Friends = () => {
@@ -19,129 +22,149 @@ const Friends = () => {
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [pending, setPending] = useState([]);
-  const [rejected, setRejected] = useState([]);
-
-
-
-
   const [loading, setLoading] = useState(false);
 
+  // All my friends
   const handleFriendsList = async () => {
     try {
       const res = await FriendList();
-
-      const friendsData = res?.data?.friends || [];
-
-      console.log("Friends:", friendsData);
-
-      setFriends(friendsData);
+      setFriends(res?.data?.friends || []);
     } catch (error) {
-      console.error("Failed to fetch friends:", error);
-
       setFriends([]);
+      gooeyToast.error("Failed to load friends", {
+        description:
+          error?.response?.data?.message || "Unable to fetch your friends.",
+      });
     }
   };
 
-
+  // Incoming requests
   const handleRequestList = async () => {
     try {
       const res = await GetRequestList();
-
-      const requestData = res?.data?.requests || [];
-
-      console.log("Received Requests:", requestData);
-
-      setRequests(requestData);
+      setRequests(res?.data?.requests || []);
     } catch (error) {
-      console.error(
-        "Failed to fetch friend requests:",
-        error
-      );
-
+      console.error("Failed to fetch friend requests:", error);
       setRequests([]);
+      gooeyToast.error("Failed to load requests");
     }
   };
 
-
+  // Sent / pending requests
   const handlePendingList = async () => {
     try {
       const res = await GetPendingList();
-
-      const pendingData = res?.data?.pending || [];
-
-      console.log("Pending Requests:", pendingData);
-
-      setPending(pendingData);
+      setPending(res?.data?.pending || []);
     } catch (error) {
-      console.error(
-        "Failed to fetch pending requests:",
-        error
-      );
-
+      console.error("Failed to fetch pending requests:", error);
       setPending([]);
+      gooeyToast.error("Failed to load pending requests");
     }
   };
 
-  const handleRejectedList = async () => {
+  // Cancel a request I sent
+  // NOTE: verify in friend.api that PendingRejectRequest is the "cancel sent request" call.
+  const handleDeletePending = async (relationshipId) => {
+    if (!relationshipId) {
+      gooeyToast.error("Unable to cancel request", {
+        description: "Relationship ID is missing.",
+      });
+      return;
+    }
+
     try {
-      const res = await GetRejected();
+      await PendingRejectRequest(relationshipId);
 
-      const rejectedData = res?.data?.requests || [];
-
-      console.log("Rejected Requests:", rejectedData);
-
-      setRejected(rejectedData);
+      setPending((prev) =>
+        prev.filter((item) => item.relationshipId !== relationshipId)
+      );
+      gooeyToast.success("Request cancelled");
     } catch (error) {
       console.error(
-        "Failed to fetch rejected requests:",
-        error
+        "Failed to cancel pending request:",
+        error?.response?.data || error
       );
-
-      setRejected([]);
+      gooeyToast.error("Failed to cancel request");
     }
   };
 
-  // =========================
-  // FETCH ALL FRIEND DATA
-  // =========================
+  // Accept an incoming request (takes the id explicitly - `request` was undefined before)
+  const handleAccept = async (requestId) => {
+    if (!requestId) {
+      gooeyToast.error("Failed to accept", {
+        description: "Request ID is missing.",
+      });
+      return;
+    }
 
+    try {
+      await AcceptRequest(requestId);
+
+      // remove instantly from UI (match on either id field)
+      setRequests((prev) =>
+        prev.filter(
+          (r) => r._id !== requestId && r.relationshipId !== requestId
+        )
+      );
+
+      // re-sync with server so lists are always accurate
+      await Promise.all([handleRequestList(), handleFriendsList()]);
+
+      gooeyToast.success("Request accepted");
+    } catch (error) {
+      console.error("Failed to accept request:", error?.response?.data || error);
+      gooeyToast.error("Failed to accept");
+    }
+  };
+
+  // Reject an incoming request
+  const handleReject = async (requestId) => {
+    if (!requestId) {
+      gooeyToast.error("Failed to reject", {
+        description: "Request ID is missing.",
+      });
+      return;
+    }
+
+    try {
+      await RejectRequest(requestId);
+
+      setRequests((prev) =>
+        prev.filter(
+          (r) => r._id !== requestId && r.relationshipId !== requestId
+        )
+      );
+
+      await handleRequestList();
+
+      gooeyToast.success("Request rejected");
+    } catch (error) {
+      console.error("Failed to reject request:", error?.response?.data || error);
+      gooeyToast.error("Failed to reject");
+    }
+  };
+
+  // Initial fetch
   const fetchFriendData = async () => {
     try {
       setLoading(true);
-
       await Promise.all([
         handleFriendsList(),
         handleRequestList(),
         handlePendingList(),
-        handleRejectedList(),
       ]);
     } catch (error) {
-      console.error(
-        "Failed to fetch friend data:",
-        error
-      );
+      console.error("Failed to fetch friend data:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // =========================
-  // INITIAL FETCH
-  // =========================
-
   useEffect(() => {
     fetchFriendData();
   }, []);
 
-  // =========================
-  // RENDER CONTENT
-  // =========================
-
   const renderContent = () => {
-    // =========================
-    // LOADING
-    // =========================
-
     if (loading) {
       return (
         <div className="flex min-h-[300px] items-center justify-center">
@@ -151,19 +174,12 @@ const Friends = () => {
     }
 
     switch (activeTab) {
-      // =========================
-      // ALL FRIENDS
-      // =========================
-
       case "friends":
         return friends.length ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {friends.map((friend) => (
               <FriendCard
-                key={
-                  friend.relationshipId ||
-                  friend._id
-                }
+                key={friend.relationshipId || friend._id}
                 friend={friend}
               />
             ))}
@@ -172,10 +188,6 @@ const Friends = () => {
           <EmptyFriends type="friends" />
         );
 
-      // =========================
-      // RECEIVED REQUESTS
-      // =========================
-
       case "requests":
         return requests.length ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -183,6 +195,8 @@ const Friends = () => {
               <RequestCard
                 key={request._id}
                 request={request}
+                handleAccept={() => handleAccept(request._id)}
+                handleReject={() => handleReject(request._id)}
               />
             ))}
           </div>
@@ -190,18 +204,14 @@ const Friends = () => {
           <EmptyFriends type="requests" />
         );
 
-      // =========================
-      // SENT / PENDING
-      // =========================
-
       case "pending":
         return pending.length ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {pending.map((item) => (
               <PendingCard
                 key={item.relationshipId}
-                user={item.user}
-                relationshipId={item.relationshipId}
+                item={item}
+                onDelete={handleDeletePending}
               />
             ))}
           </div>
@@ -209,137 +219,76 @@ const Friends = () => {
           <EmptyFriends type="pending" />
         );
 
-      // =========================
-      // REJECTED
-      // =========================
-
-      case "rejected":
-        return rejected.length ? (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {rejected.map((relationship) => (
-              <PendingCard
-                key={
-                  relationship.relationshipId ||
-                  relationship._id
-                }
-                user={
-                  relationship.user ||
-                  relationship
-                }
-                relationshipId={
-                  relationship.relationshipId ||
-                  relationship._id
-                }
-                rejected
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyFriends type="rejected" />
-        );
-
       default:
         return null;
     }
   };
 
-  // =========================
-  // UI
-  // =========================
-
   return (
-    <main className="min-h-dvh bg-[#F6F1E8] px-4 py-5 text-[#163B2A] sm:px-6 sm:py-7 lg:px-8">
+    <main className="overflow-hidden bg-green-950 text-[#163B2A] sm:px-6 sm:py-7 lg:px-8">
       <div className="mx-auto w-full max-w-6xl">
+        <GooeyToaster position="top-center" />
 
-        {/* =========================
-            HEADER
-        ========================= */}
-
+        {/* HEADER */}
         <motion.header
-          initial={{
-            opacity: 0,
-            y: 8,
-          }}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          className="mb-5 sm:mb-7"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="overflow-hidden"
         >
-          <div className="flex items-end justify-between gap-4">
+          <div className="relative flex min-h-32 flex-col items-center justify-center px-4">
+            {/* Subtle glow */}
+            <div className="pointer-events-none absolute -left-16 -top-20 h-40 w-40 rounded-full bg-emerald-400/10 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -right-16 h-40 w-40 rounded-full bg-lime-400/10 blur-3xl" />
 
-            <div>
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#9A9286]">
+            {/* Small label (spans had no height, so the lines never rendered) */}
+            <div className="relative mb-1 flex items-center gap-2">
+              <span className="h-px w-5 bg-emerald-400/40" />
+              <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-white/50">
                 Connections
               </p>
-
-              <h1 className="text-[25px] font-bold tracking-[-0.04em] text-[#163B2A] sm:text-[30px]">
-                Friends
-              </h1>
-
-              <p className="mt-1 max-w-md text-[13px] leading-5 text-[#756F64] sm:text-[14px]">
-                Manage your friends and connection requests.
-              </p>
+              <span className="h-px w-5 bg-emerald-400/40" />
             </div>
 
-            {/* Desktop count */}
+            <h1 className="relative text-4xl font-black tracking-[0.12em] text-white">
+              FRIENDS
+            </h1>
 
-            <div className="hidden shrink-0 rounded-2xl border border-[#E7DFD2] bg-white/60 px-4 py-2.5 text-right sm:block">
-              <p className="text-[11px] font-medium text-[#9A9286]">
-                Total friends
-              </p>
-
-              <p className="text-lg font-bold text-[#163B2A]">
-                {friends.length}
+            <div className="relative mt-1 flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <p className="text-[10px] font-medium tracking-wide text-white/55">
+                {friends.length}{" "}
+                {friends.length === 1 ? "connection" : "connections"}
               </p>
             </div>
-
           </div>
         </motion.header>
 
-        {/* =========================
-            TABS
-        ========================= */}
-
-        <FriendsTabs
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          counts={{
-            friends: friends.length,
-            requests: requests.length,
-            pending: pending.length,
-            rejected: rejected.length,
-          }}
-        />
-
-        {/* =========================
-            CONTENT
-        ========================= */}
-
-        <AnimatePresence mode="wait">
-          <motion.section
-            key={activeTab}
-            initial={{
-              opacity: 0,
-              y: 8,
+        {/* TABS + CONTENT */}
+        <div className="min-h-0 flex-1 overflow-hidden rounded-t-4xl bg-white px-4 py-4">
+          <FriendsTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            counts={{
+              friends: friends.length,
+              requests: requests.length,
+              pending: pending.length,
             }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            exit={{
-              opacity: 0,
-              y: -6,
-            }}
-            transition={{
-              duration: 0.2,
-            }}
-            className="mt-4 sm:mt-5"
-          >
-            {renderContent()}
-          </motion.section>
-        </AnimatePresence>
+          />
 
+          <AnimatePresence mode="wait">
+            <motion.section
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2 }}
+              className="mt-4 sm:mt-5"
+            >
+              {renderContent()}
+            </motion.section>
+          </AnimatePresence>
+        </div>
       </div>
     </main>
   );

@@ -13,7 +13,7 @@ export async function googleCallback(req, res) {
         user.lastSeen = new Date();
         await user.save();
 
-        return res.redirect(`${process.env.CLIENT_URL}/welcome`);
+        return res.redirect(`${process.env.CLIENT_URL}/explore`);
     } catch (error) {
         console.log("google login failed", error);
         return res.redirect(`${process.env.CLIENT_URL}/login?error=server_error`);
