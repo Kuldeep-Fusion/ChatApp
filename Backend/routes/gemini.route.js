@@ -2,7 +2,7 @@ import express from 'express'
 import { askAI } from '../Controllers/gemini/Genrate.controller.js';
 import { AuthMiddleware } from '../middleware/auth.middleware.js';
 import { getAIHistory } from '../Controllers/gemini/History.controller.js';
-import { deleteAIHistory } from '../Controllers/gemini/Delete.Controller.js';
+import { deleteAIHistory } from '../Controllers/gemini/Delete.controller.js';
 
 
 const router = express.Router();
