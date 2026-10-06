@@ -9,7 +9,7 @@ const io = initSocket(server);               // app nahi, server pass karo
 
 await ConnectDB();
 app.set("io", io);
-const PORT = 3000 
+const PORT = 3000 || process.env.PORT;
 server.listen(PORT, () => {
   console.log(`Server running ${PORT}`);
 });
