@@ -9,7 +9,7 @@ import Explore from "./dashboard/Explore/Explore";
 import PublicRoute from "./Routes/PublicRoute";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import NotFound from "./NotFound";
-import Friends from "./dashboard/friends/Friends";
+import Friends from "./dashboard/Friends/Friends";
 import ChatWithAI from "./dashboard/AIChat/ChatWithAI";
 import SearchPage from "./dashboard/search/SearchPage";
 import ProfilePopup from "./dashboard/Profile/SingleProfile/SingleProfile";
