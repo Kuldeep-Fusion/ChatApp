@@ -18,7 +18,7 @@ export function SocketProvider({ children }) {
       return;
     }
 
-    const s = io(process.env.API_URL, {
+    const s = io(import.meta.env.API_URL, {
       withCredentials: true,
     });
 
