@@ -18,7 +18,7 @@ export function SocketProvider({ children }) {
       return;
     }
 
-    const s = io("http://localhost:3000", {
+    const s = io(process.env.API_URL, {
       withCredentials: true,
     });
 
