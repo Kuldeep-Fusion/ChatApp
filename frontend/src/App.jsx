@@ -9,7 +9,6 @@ import Explore from "./dashboard/Explore/Explore";
 import PublicRoute from "./Routes/PublicRoute";
 import ProtectedRoute from "./Routes/ProtectedRoute";
 import NotFound from "./NotFound";
-import Developer from "./dashboard/pages/Developer";
 import Friends from "./dashboard/friends/Friends";
 import ChatWithAI from "./dashboard/AIChat/ChatWithAI";
 import SearchPage from "./dashboard/search/SearchPage";
@@ -39,7 +38,6 @@ function App() {
              <Route path="chat/:id" element={<SingleChat />} />
             <Route path="profile" element={<UserProfile />} />
             <Route path="explore" element={<Explore />} />
-            <Route path="developer" element={<Developer/>}/>
             <Route path="friends" element={<Friends/>}/>
             <Route path="chatwithai" element={<ChatWithAI/>}/>
             <Route path="/search" element={<SearchPage />} />

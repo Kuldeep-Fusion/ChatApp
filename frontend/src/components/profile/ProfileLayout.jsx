@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState  } from "react";
+import { Link } from "react-router-dom";
 
 import ProfileHeader from "./ProfileHeader";
 
 import ProfileSection from "./ProfileSection";
 import ProfileMenuItem from "./ProfileMenuItem";
 
-
-// import EditProfileModal from "./EditProfileModal";
+import EditProfileModal from "./EditProfileModal";
 // import BlockedUsersModal from "./BlockedUsersModal";
 import FriendsModal from "./FriendsModal";
 import EditProfileAvatar from './EditProfilePhoto'
+
+
 
 
 import {
@@ -30,6 +32,8 @@ const ProfileLayout = () => {
   const[showEditProfileAvatar, setShowEditProfileAvatar] = useState(false);
   // const [showBlocked, setShowBlocked] = useState(false);
   const [showFriends, setShowFriends] = useState(false);
+
+
 
   const {logout} = useAuth();
 
@@ -141,6 +145,7 @@ const handleDeleteAccount = async () => {
           ========================== */}
 
           <ProfileSection title="Privacy">
+            <Link to="/privacy-policy">
 
             <ProfileMenuItem
               icon={ShieldCheckIcon}
@@ -148,7 +153,9 @@ const handleDeleteAccount = async () => {
               description="Control your privacy settings"
               iconBg="bg-[#fff7e8]"
               iconColor="#d89a28"
+              
             />
+            </Link>
 
           </ProfileSection>
 
