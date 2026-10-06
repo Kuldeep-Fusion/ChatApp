@@ -1,8 +1,15 @@
-import ConnectDB from "./config/MongoDb.js";
-import app from "./src/app.js"
+import http from "http";
+import app from './src/app.js';
+import { initSocket } from "./src/socket/index.js";
+import ConnectDB from './config/MongoDb.js'
+
+const server = http.createServer(app);       // pehle http server banao
+console.log(server.constructor.name);        // "Server" print hona chahiye
+const io = initSocket(server);               // app nahi, server pass karo
 
 ConnectDB();
-
-app.listen(3000, () => console.log('server is listening  Port: 3000'));
-
-
+app.set("io", io);
+const PORT = 3000 
+server.listen(PORT, () => {
+  console.log(`Server running ${PORT}`);
+});
