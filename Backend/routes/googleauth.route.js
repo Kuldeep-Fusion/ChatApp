@@ -1,10 +1,11 @@
 import express from "express";
 import passport from "passport";
 import { googleCallback } from "../Controllers/auth/googleauth.controller.js";
+import ConnectDB from "../config/MongoDb.js";
 
 
 const router = express.Router();
-
+await ConnectDB();
 // Step 1: user ko Google pe bhejta hai
 router.get(
   "/google",

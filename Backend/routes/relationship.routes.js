@@ -14,9 +14,10 @@ import {
 
 import {AuthMiddleware} from "../middleware/auth.middleware.js";
 import { getFriendById } from "../Controllers/relationship/getFriendById.controller.js";
+import ConnectDB from "../config/MongoDb.js";
 
 const router = express.Router();
-
+await ConnectDB();
 
 // Send request
 router.post(

@@ -4,9 +4,10 @@ import { AuthMiddleware } from '../middleware/auth.middleware.js';
 import { GetAll } from '../Controllers/conversation/GetAll.controller.js';
 import { GetSingle } from '../Controllers/conversation/GetSingle.controller.js';
 import { Delete } from '../Controllers/conversation/Delete.controller.js';
+import ConnectDB from '../config/MongoDb.js';
 
 const router = Router();
-
+await ConnectDB();
 router.get('/get', AuthMiddleware, GetAll); 
 router.post('/create', AuthMiddleware, Create); 
 router.get('/get/:id', AuthMiddleware, GetSingle)

@@ -9,9 +9,10 @@ import { UpdateAvtar } from '../Controllers/user/UpdateAvatar.controller.js';
 import upload from '../middleware/upload.js';
 import { GetExplore } from '../Controllers/user/Explore.controller.js';
 import { SearchUsers } from '../Controllers/search/SearchUser.controller.js';
+import ConnectDB from '../config/MongoDb.js';
 
 const router = Router();
-
+await ConnectDB();
 router.get('/get', GetAllUsers); 
 router.get('/get/:id', GetSingleUser);
 router.delete('/delete/:id', DeleteUser);

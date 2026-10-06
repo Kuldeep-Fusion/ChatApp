@@ -8,9 +8,10 @@ import { UpdateMessage } from '../Controllers/message/UpdateMessage.controller.j
 import upload from '../middleware/upload.js';
 import { AuthMiddleware } from '../middleware/auth.middleware.js';
 import { DeleteMessageMedia } from '../Controllers/message/DeleteMessageMedia.controller.js';
+import ConnectDB from '../config/MongoDb.js';
 
 const router = Router();
-
+await ConnectDB();
 // router.get('/:conversationId'); 
 router.post('/create/:receiverId', AuthMiddleware, upload.single("media"), CreateMessage); //create message in chat box
 router.get('/get/:receiverId', AuthMiddleware, GetSingleMessage); // get all message in chat box

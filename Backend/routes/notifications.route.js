@@ -1,7 +1,8 @@
 import Router from 'express'
+import ConnectDB from '../config/MongoDb';
 
 const router = Router();
-
+await ConnectDB();
 router.get('/'); 
 router.put('/:notificationId/read'); 
 
