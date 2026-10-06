@@ -1,7 +1,7 @@
 import express from 'express'
-import { askAI } from '../Controllers/gemini/Genrate.Controller.js';
+import { askAI } from '../Controllers/gemini/Genrate.controller.js';
 import { AuthMiddleware } from '../middleware/auth.middleware.js';
-import { getAIHistory } from '../Controllers/gemini/History.Controller.js';
+import { getAIHistory } from '../Controllers/gemini/History.controller.js';
 import { deleteAIHistory } from '../Controllers/gemini/Delete.Controller.js';
 
 
