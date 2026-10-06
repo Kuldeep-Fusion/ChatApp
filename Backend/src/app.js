@@ -35,8 +35,10 @@ app.use('/api/user/manage', ManageRoute);
 app.use('/api/relationship', RelationshipRoute);
 app.use('/api/ai', GeminiRouter);
 
-app.get('/', (req, res) => {
-    return res.json({ message: 'server is running' });
+app.get("/", (req, res) => {
+  res.json({
+    message: "API working 🚀",
+  });
 });
 
 export default app;
