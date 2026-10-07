@@ -2,12 +2,12 @@ import api from './api'
 
 export  const AddFriend = (id) => api.post(`/relationship/request/${id}`);
 
-export  const GetRequestList = () => api.get(`/relationship/requests/`);
+export  const GetRequestList = () => api.get(`/relationship/requests`);
 export  const GetPendingList = () => api.get(`/relationship/pending`);
 // http://localhost:3000/api/relationship/request/6abea5ca3901130dba2ad207/reject
 export  const GetRejected = () => api.get(`/relationship/rejected`);
 
-export  const FriendList = () => api.get(`/relationship/friends/`);
+export  const FriendList = () => api.get(`/relationship/friends`);
 
 export  const GetSingleFriend = (id) => api.get(`/relationship/friend/${id}`);
 

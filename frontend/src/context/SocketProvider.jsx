@@ -18,8 +18,12 @@ export function SocketProvider({ children }) {
       return;
     }
 
+    const token = localStorage.getItem("token");
     const s = io(import.meta.env.VITE_SOCKET_URL, {
       withCredentials: true,
+      auth: {
+        token: token,
+      },
     });
 
     s.on("connect", () => {
