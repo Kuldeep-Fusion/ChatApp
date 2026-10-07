@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 import { SocketAuthMiddleware } from "../../middleware/socket.middelware.js";
 import config from "../../config/config.js";
 import User from "../../models/user.model.js";
-import Message from "../../models/Message.Model.js";
+import Message from "../../models/Message.model.js";
 
 export function initSocket(server) {
   const io = new Server(server, {
