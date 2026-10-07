@@ -10,6 +10,7 @@ export function initSocket(server) {
       origin: config.CLIENT_URL,
       credentials: true,
     },
+    transports: ["websocket", "polling"],
   });
 
   io.use(SocketAuthMiddleware);
