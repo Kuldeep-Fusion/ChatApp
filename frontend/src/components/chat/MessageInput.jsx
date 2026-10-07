@@ -1,6 +1,5 @@
 import {
   Paperclip,
-  Mic,
   Send,
   X,
   Pencil,
@@ -19,7 +18,6 @@ const MessageInput = ({
   onEditSubmit,
 }) => {
   const { id } = useParams();
-  
 
   const socket = useSocket();
 
@@ -38,40 +36,27 @@ const MessageInput = ({
   useEffect(() => {
     if (editingMessage) {
       setMessage(editingMessage.content || "");
-
-      // Editing is only for text messages
       setFile(null);
       setPreview(null);
-
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }, [editingMessage]);
 
   // --------------------------------
-  // Can Send
+  // Can Send — allow file-only (no text required)
   // --------------------------------
-  const canSend =
-    message.trim() && !sending;
+  const canSend = (message.trim() || file) && !sending;
 
   // --------------------------------
   // File Select
   // --------------------------------
   const handleChange = (e) => {
     const selected = e.target.files?.[0];
-
     if (!selected) return;
-
-    if (preview) {
-      URL.revokeObjectURL(preview);
-    }
-
+    if (preview) URL.revokeObjectURL(preview);
     setFile(selected);
-
     if (selected.type.startsWith("image/")) {
-      const objectUrl = URL.createObjectURL(selected);
-      setPreview(objectUrl);
+      setPreview(URL.createObjectURL(selected));
     } else {
       setPreview(null);
     }
@@ -81,34 +66,19 @@ const MessageInput = ({
   // Remove File
   // --------------------------------
   const cancelSelection = () => {
-    if (preview) {
-      URL.revokeObjectURL(preview);
-    }
-
+    if (preview) URL.revokeObjectURL(preview);
     setFile(null);
     setPreview(null);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   // --------------------------------
   // Message Type
   // --------------------------------
   const getType = () => {
-    if (!file) {
-      return "text";
-    }
-
-    if (file.type.startsWith("image/")) {
-      return "image";
-    }
-
-    if (file.type.startsWith("video/")) {
-      return "video";
-    }
-
+    if (!file) return "text";
+    if (file.type.startsWith("image/")) return "image";
+    if (file.type.startsWith("video/")) return "video";
     return "file";
   };
 
@@ -117,7 +87,6 @@ const MessageInput = ({
   // --------------------------------
   const handleCancelEdit = () => {
     setMessage("");
-
     onCancelEdit?.();
   };
 
@@ -126,98 +95,56 @@ const MessageInput = ({
   // --------------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!canSend) return;
 
-    // ==================================
     // EDIT MODE
-    // ==================================
     if (isEditing) {
       try {
         setSending(true);
-
-        await onEditSubmit?.({
-          id: editingMessage.id,
-          content: message.trim(),
-        });
-
+        await onEditSubmit?.({ id: editingMessage.id, content: message.trim() });
         setMessage("");
-
         onCancelEdit?.();
       } catch (error) {
-        console.error(
-          "Failed to edit message:",
-          error?.response?.data || error
-        );
+        console.error("Failed to edit message:", error?.response?.data || error);
       } finally {
         setSending(false);
       }
-
       return;
     }
 
-    // ==================================
-    // NORMAL SEND MODE
-    // ==================================
-    if (!id) {
-      console.error("Conversation ID is missing");
-      return;
-    }
+    // NORMAL SEND
+    if (!id) return;
 
     const content = message.trim();
     const type = getType();
-
     const formData = new FormData();
-
     formData.append("type", type);
     formData.append("content", content);
-
-    if (file) {
-      formData.append("media", file);
-    }
+    if (file) formData.append("media", file);
 
     try {
       setSending(true);
-
       const res = await SendMessage(id, formData);
-
-      console.log("Message saved:", res?.data);
-
       const newMessage = res?.data?.data;
-
       if (!newMessage) {
         console.error("Message response is missing");
         return;
       }
-
       onSent?.(newMessage);
-
       if (socket?.connected) {
-        socket.emit("send_message", {
-          receiverId: id,
-          message: newMessage,
-        });
-
-        console.log("📤 Message sent through socket");
-      } else {
-        console.warn("Socket is not connected");
+        socket.emit("send_message", { receiverId: id, message: newMessage });
       }
-
       setMessage("");
-
       cancelSelection();
     } catch (error) {
-      console.error(
-        "Failed to send message:",
-        error?.response?.data || error
-      );
+      console.error("Failed to send message:", error?.response?.data || error);
     } finally {
       setSending(false);
     }
   };
 
   return (
-    <div className="px-4 pb-5 pt-2 sm:px-5 sm:pb-6">
+    <div className="px-3 pb-4 pt-2 sm:px-4 sm:pb-5">
 
       {/* ================================
           EDIT MODE HEADER
@@ -237,17 +164,12 @@ const MessageInput = ({
           "
         >
           <div className="flex items-center gap-2">
-            <Pencil
-              size={16}
-              className="text-[#687d1c]"
-            />
-
+            <Pencil size={14} className="text-[#687d1c]" />
             <div className="flex flex-col">
               <span className="text-xs font-semibold text-[#20251a]">
                 Editing message
               </span>
-
-              <span className="max-w-[250px] truncate text-xs text-gray-500">
+              <span className="max-w-[200px] truncate text-xs text-gray-500">
                 {editingMessage?.content}
               </span>
             </div>
@@ -257,20 +179,13 @@ const MessageInput = ({
             type="button"
             onClick={handleCancelEdit}
             className="
-              flex
-              h-7
-              w-7
-              items-center
-              justify-center
-              rounded-full
-              text-gray-500
-              transition
-              hover:bg-gray-100
-              hover:text-gray-800
+              flex h-6 w-6 items-center justify-center
+              rounded-full text-gray-500 transition
+              hover:bg-gray-100 hover:text-gray-800
             "
             aria-label="Cancel editing"
           >
-            <X size={17} />
+            <X size={15} />
           </button>
         </div>
       )}
@@ -280,63 +195,47 @@ const MessageInput = ({
       ================================= */}
       {!isEditing && file && (
         <div className="relative mb-2 inline-block">
-
           {preview ? (
             <img
               src={preview}
               alt={file.name}
-              className="h-20 w-20 rounded-lg object-cover"
+              className="h-16 w-16 rounded-lg object-cover"
             />
           ) : (
-            <div className="max-w-[220px] truncate rounded-lg bg-white px-3 py-2 text-sm text-[#222]">
+            <div className="max-w-[200px] truncate rounded-lg bg-white px-3 py-2 text-sm text-[#222]">
               {file.name}
             </div>
           )}
-
           <button
             type="button"
             onClick={cancelSelection}
             className="
-              absolute
-              -right-2
-              -top-2
-              flex
-              h-6
-              w-6
-              items-center
-              justify-center
-              rounded-full
-              bg-white
-              text-[#555]
-              shadow
-              transition
+              absolute -right-2 -top-2
+              flex h-5 w-5 items-center justify-center
+              rounded-full bg-white text-[#555] shadow transition
               hover:bg-[#f5f5f5]
             "
           >
-            <X size={15} />
+            <X size={13} />
           </button>
-
         </div>
       )}
 
       {/* ================================
           FORM
       ================================= */}
-      <form
-        onSubmit={handleSubmit}
-        className="flex items-center gap-2"
-      >
+      <form onSubmit={handleSubmit} className="flex items-center gap-2">
 
         {/* INPUT CONTAINER */}
         <div
           className="
             flex
-            min-h-[64px]
+            min-h-[48px]
             flex-1
             items-center
             rounded-full
             bg-white
-            px-4
+            px-3
             shadow-[0_4px_20px_rgba(0,0,0,0.04)]
           "
         >
@@ -347,24 +246,13 @@ const MessageInput = ({
               <label
                 htmlFor="file"
                 className="
-                  flex
-                  h-10
-                  w-10
-                  shrink-0
-                  cursor-pointer
-                  items-center
-                  justify-center
-                  text-[#73746e]
-                  transition
-                  hover:text-[#222]
+                  flex h-8 w-8 shrink-0 cursor-pointer
+                  items-center justify-center
+                  text-[#73746e] transition hover:text-[#222]
                 "
               >
-                <Paperclip
-                  size={27}
-                  strokeWidth={1.8}
-                />
+                <Paperclip size={20} strokeWidth={1.8} />
               </label>
-
               <input
                 ref={fileInputRef}
                 type="file"
@@ -382,46 +270,13 @@ const MessageInput = ({
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder={
-              isEditing
-                ? "Edit your message..."
-                : "Enter your message"
-            }
+            placeholder={isEditing ? "Edit your message..." : "Enter your message"}
             className="
-              min-w-0
-              flex-1
-              bg-transparent
-              px-2
-              text-[17px]
-              text-[#222]
-              outline-none
-              placeholder:text-[#8d8e88]
+              min-w-0 flex-1 bg-transparent
+              px-2 text-[15px] text-[#222]
+              outline-none placeholder:text-[#8d8e88]
             "
           />
-
-          {/* Mic */}
-          {!isEditing && (
-            <button
-              type="button"
-              className="
-                hidden
-                h-10
-                w-10
-                shrink-0
-                items-center
-                justify-center
-                text-[#73746e]
-                transition
-                hover:text-[#222]
-                xs:flex
-              "
-            >
-              <Mic
-                size={26}
-                strokeWidth={1.8}
-              />
-            </button>
-          )}
 
         </div>
 
@@ -432,32 +287,20 @@ const MessageInput = ({
           type="submit"
           disabled={!canSend}
           className="
-            flex
-            h-[62px]
-            w-[62px]
-            shrink-0
-            items-center
-            justify-center
-            rounded-full
-            bg-[#b9f22a]
-            text-[#20251a]
-            shadow-[0_5px_18px_rgba(150,200,20,0.18)]
-            transition
-            hover:scale-105
-            hover:bg-[#ace51e]
+            flex h-11 w-11 shrink-0
+            items-center justify-center
+            rounded-full bg-[#b9f22a] text-[#20251a]
+            shadow-[0_4px_14px_rgba(150,200,20,0.22)]
+            transition hover:scale-105 hover:bg-[#ace51e]
             active:scale-95
-            disabled:cursor-not-allowed
-            disabled:opacity-60
+            disabled:cursor-not-allowed disabled:opacity-50
           "
         >
           {isEditing ? (
-            <Pencil
-              size={25}
-              strokeWidth={2}
-            />
+            <Pencil size={19} strokeWidth={2} />
           ) : (
             <Send
-              size={28}
+              size={20}
               fill="currentColor"
               strokeWidth={1.5}
               className="-rotate-[5deg]"

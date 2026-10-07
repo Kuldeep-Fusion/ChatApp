@@ -22,7 +22,7 @@ const ChatHeader = ({ user, isActive, lastSeen }) => {
   };
 
   return (
-    <header className="flex items-center justify-between px-5 pb-4 pt-10 sm:pt-6">
+    <header className="flex items-center justify-between px-5 pb-4 pt-10 sm:pt-6 sticky top-0 z-10 bg-[#f8f8ee]/90 backdrop-blur-md border-b border-black/5">
 
       {/* Left */}
       <div className="flex min-w-0 items-center gap-3">
