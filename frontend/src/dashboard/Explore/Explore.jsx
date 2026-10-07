@@ -12,10 +12,8 @@ const Explore = () => {
       className="
         mx-auto
         flex
-        h-[90vh]
         w-full
         flex-col
-        overflow-hidden
         bg-green-950
         sm:max-w-[520px]
         sm:rounded-[36px]
@@ -24,23 +22,23 @@ const Explore = () => {
         sm:shadow-[0_20px_60px_rgba(0,0,0,0.08)]
       "
     >
-       <Header/>
+      <Header />
       {/* ================= TOP SECTION ================= */}
       <div className="shrink-0 px-5 pt-5 sm:px-6 sm:pt-6 rounded-t-4xl bg-white">
-       
+
         {/* Search + Filter */}
 
         {/* ================= MATCHES ================= */}
-       {/* Recent Active */}
-      <div className="mt-1">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-[#181818]">
-            Recently Active
-         </h2>
-       </div>
+        {/* Recent Active */}
+        <div className="mt-1">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-[#181818]">
+              Recently Active
+            </h2>
+          </div>
 
-        <RecentActiveSlider />
-      </div>
+          <RecentActiveSlider />
+        </div>
 
         {/* ================= TITLE ================= */}
         <div className="mt-5">
