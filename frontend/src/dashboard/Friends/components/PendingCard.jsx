@@ -61,7 +61,7 @@ const PendingCard = ({
       {!rejected && (
         <button
           type="button"
-          onClick={() => onDelete(item.relationshipId)}
+          onClick={() => onDelete(item?.relationshipId)}
           className="mt-3.5 flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-[#DED5C7] bg-[#F8F3EA] text-[11px] font-semibold text-[#665F54] transition hover:bg-[#F0E9DE] active:scale-[0.98] sm:h-11 sm:text-xs"
         >
           <X size={14} />

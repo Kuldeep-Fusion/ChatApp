@@ -177,9 +177,9 @@ const Friends = () => {
       case "friends":
         return friends.length ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {friends.map((friend) => (
+            {friends.map((friend) => friend && (
               <FriendCard
-                key={friend.relationshipId || friend._id}
+                key={friend?.relationshipId || friend?._id}
                 friend={friend}
               />
             ))}
@@ -191,12 +191,12 @@ const Friends = () => {
       case "requests":
         return requests.length ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {requests.map((request) => (
+            {requests.map((request) => request && (
               <RequestCard
-                key={request._id}
+                key={request?._id}
                 request={request}
-                handleAccept={() => handleAccept(request._id)}
-                handleReject={() => handleReject(request._id)}
+                handleAccept={() => handleAccept(request?._id)}
+                handleReject={() => handleReject(request?._id)}
               />
             ))}
           </div>
@@ -207,9 +207,9 @@ const Friends = () => {
       case "pending":
         return pending.length ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {pending.map((item) => (
+            {pending.map((item) => item && (
               <PendingCard
-                key={item.relationshipId}
+                key={item?.relationshipId || item?._id}
                 item={item}
                 onDelete={handleDeletePending}
               />
