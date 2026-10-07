@@ -15,6 +15,7 @@ const Explore = () => {
         h-[90vh]
         w-full
         flex-col
+        overflow-hidden
         bg-green-950
         sm:max-w-[520px]
         sm:rounded-[36px]
