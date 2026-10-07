@@ -1,3 +1,5 @@
+// context/SocketProvider.jsx
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext.jsx";
@@ -16,26 +18,16 @@ export function SocketProvider({ children }) {
       return;
     }
 
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.log("❌ Socket: access token not found");
-      return;
-    }
-
     const s = io(import.meta.env.VITE_SOCKET_URL, {
-      auth: {
-        token,
-      },
-      transports: ["websocket"],
+      withCredentials: true,
     });
 
     s.on("connect", () => {
       console.log("🟢 Socket connected:", s.id);
     });
 
-    s.on("disconnect", (reason) => {
-      console.log("🔴 Socket disconnected:", reason);
+    s.on("disconnect", () => {
+      console.log("🔴 Socket disconnected");
     });
 
     s.on("connect_error", (error) => {
