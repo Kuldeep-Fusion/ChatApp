@@ -5,6 +5,9 @@ import config from "../config/config.js";
 export function SocketAuthMiddleware(socket, next) {
   try {
     let token;
+     console.log("SOCKET COOKIE:", socket.handshake.headers.cookie);
+    console.log("SOCKET AUTH:", socket.handshake.auth);
+    console.log("SOCKET AUTHORIZATION:", socket.handshake.headers.authorization);
 
     // 1. Authorization header (Bearer)
     const authHeader = socket.handshake.headers.authorization;

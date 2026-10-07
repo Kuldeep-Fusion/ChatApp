@@ -20,6 +20,7 @@ export function SocketProvider({ children }) {
 
     const s = io(import.meta.env.VITE_SOCKET_URL, {
       withCredentials: true,
+      transports: ["polling"],
     });
 
     s.on("connect", () => {
