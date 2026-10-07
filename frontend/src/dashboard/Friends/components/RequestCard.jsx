@@ -61,7 +61,7 @@ const RequestCard = ({ request , handleAccept ,  handleReject }) => {
 
         <button
           type="button"
-          onClick={ () => {handleAccept}}
+          onClick={handleAccept}
           className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-[#163B2A] text-[11px] font-semibold text-white transition hover:bg-[#1D4A35] active:scale-[0.98] sm:h-11 sm:text-xs"
         >
           <Check size={14} />
@@ -70,7 +70,7 @@ const RequestCard = ({ request , handleAccept ,  handleReject }) => {
 
         <button
           type="button"
-          onClick={ () => {handleReject}}
+          onClick={handleReject}
           className="flex h-10 items-center justify-center gap-1.5 rounded-xl border border-[#DED5C7] bg-[#F8F3EA] text-[11px] font-semibold text-[#665F54] transition hover:bg-[#F0E9DE] active:scale-[0.98] sm:h-11 sm:text-xs"
         >
           <X size={14} />

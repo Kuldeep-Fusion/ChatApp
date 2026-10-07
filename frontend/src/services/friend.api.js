@@ -16,7 +16,7 @@ export  const GetSingleFriend = (id) => api.get(`/relationship/friend/${id}`);
 
 export  const AcceptRequest = (relationId) => api.patch(`/relationship/request/${relationId}/accept`);
 export  const RequestDelete = (relationId) => api.delete(`/relationship/friend/${relationId}`);
-export  const RejectRequest = (id) => api.delete(`/relationship/request/${id}`);
-export  const PendingRejectRequest = (id) => api.patch(`/relationship/request/${id}/reject`);
+export  const RejectRequest = (id) => api.patch(`/relationship/request/${id}/reject`);
+export  const CancelRequest = (id) => api.delete(`/relationship/request/${id}`);
 export  const RemoveFreind = (id) => api.delete(`/relationship/friend/${id}/delete`);  
 

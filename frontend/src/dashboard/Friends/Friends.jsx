@@ -13,7 +13,7 @@ import {
   FriendList,
   GetPendingList,
   GetRequestList,
-  PendingRejectRequest,
+  CancelRequest,
   RejectRequest,
 } from "../../services/friend.api";
 
@@ -73,7 +73,7 @@ const Friends = () => {
     }
 
     try {
-      await PendingRejectRequest(relationshipId);
+      await CancelRequest(relationshipId);
 
       setPending((prev) =>
         prev.filter((item) => item.relationshipId !== relationshipId)
