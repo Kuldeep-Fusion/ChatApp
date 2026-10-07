@@ -97,7 +97,12 @@ api.interceptors.response.use(
       try {
         console.log("🔄 Access token expired. Refreshing...");
 
-        const refreshResponse = await api.post("/auth/refresh");
+        // Mobile Google login ke liye: refreshToken localStorage mein hoga
+        const refreshToken = localStorage.getItem("refreshToken");
+        const refreshResponse = await api.post("/auth/refresh", {}, {
+          headers: refreshToken ? { Authorization: `Bearer ${refreshToken}` } : {},
+        });
+
 
         const newAccessToken = refreshResponse.data?.token;
 

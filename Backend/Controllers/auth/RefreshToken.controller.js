@@ -7,7 +7,16 @@ import config from "../../config/config.js";
 
 export async function RefreshToken(req, res) {
   try {
-    const token = req.cookies?.refreshToken;
+    // Cookie se pehle try karo (desktop), phir Authorization header (mobile Google login)
+    let token = req.cookies?.refreshToken;
+
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.split(" ")[1];
+      }
+    }
+
     if (!token) {
       return res.status(401).json({ success: false, message: "No refresh token" });
     }

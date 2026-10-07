@@ -54,6 +54,7 @@ export function AuthProvider({ children }) {
 
       setUser(null);
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
     };
 
     window.addEventListener(
@@ -79,8 +80,9 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.log("Logout API failed:", error);
     } finally {
-      // Frontend token remove
+      // Frontend tokens remove karo (cookie + localStorage dono)
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
 
       // User state clear
       setUser(null);

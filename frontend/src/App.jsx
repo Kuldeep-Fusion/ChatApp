@@ -2,6 +2,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import DashBoard from "./dashboard/DashBoard";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
+import GoogleAuthSuccess from "./auth/GoogleAuthSuccess";
 import Message from "./dashboard/messages/Message";
 import SingleChat from "./dashboard/chat/SingleChat";
 import UserProfile from "./dashboard/Profile/UserProfile";
@@ -25,6 +26,9 @@ function App() {
 
 
         
+        {/* Google OAuth callback — public, mobile-safe */}
+        <Route path="/auth/google/success" element={<GoogleAuthSuccess />} />
+
         <Route element={<PublicRoute />}>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
